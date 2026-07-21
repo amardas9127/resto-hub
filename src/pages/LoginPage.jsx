@@ -101,12 +101,12 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Demo hint */}
+          {/* Info hint */}
           <div className="mt-6 p-3 rounded-xl bg-surface-800/50 border border-surface-700/50">
             <p className="text-xs text-surface-400 text-center leading-relaxed">
-              <span className="text-primary-400 font-medium">Demo credentials:</span>
+              Use your Supabase Auth email &amp; password.
               <br />
-              admin@restrohub.com / admin123
+              <span className="text-primary-400 font-medium">Tip:</span> Create an account in Supabase Dashboard → Authentication → Users.
             </p>
           </div>
 

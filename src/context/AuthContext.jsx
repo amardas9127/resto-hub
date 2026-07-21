@@ -4,139 +4,136 @@ import toast from 'react-hot-toast';
 
 const AuthContext = createContext(null);
 
-// Roles: admin | waiter | chef | staff
 export const SUB_USER_ROLES = ['waiter', 'chef', 'staff'];
 
-const DEFAULT_SUB_USERS = [
-  { id: 'W1', username: 'Amit Patel',  pin: '1234', role: 'waiter' },
-  { id: 'W2', username: 'Sneha Rao',   pin: '2222', role: 'waiter' },
-  { id: 'C1', username: 'Ravi Kumar',  pin: '3333', role: 'chef'   },
-  { id: 'C2', username: 'Priya Singh', pin: '4444', role: 'chef'   },
-  { id: 'S1', username: 'Mohan Das',   pin: '5555', role: 'staff'  },
-];
-
-function getSubUsers() {
-  try {
-    const saved = localStorage.getItem('restrohub_sub_users');
-    return saved ? JSON.parse(saved) : DEFAULT_SUB_USERS;
-  } catch {
-    return DEFAULT_SUB_USERS;
-  }
-}
-
-export function saveSubUsers(users) {
-  localStorage.setItem('restrohub_sub_users', JSON.stringify(users));
-}
-
 export function AuthProvider({ children }) {
-  const [user, setUser]     = useState(null);
+  const [user, setUser]       = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // ── Restore admin session from Supabase Auth ──────────────
   useEffect(() => {
-    const savedUser = localStorage.getItem('restrohub_user');
-    if (savedUser) setUser(JSON.parse(savedUser));
-    setLoading(false);
-
-    // Sync sub_users from Supabase
-    supabase.from('sub_users').select('*').then(({ data, error }) => {
-      if (!error && data?.length) {
-        saveSubUsers(data);
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUser(buildAdminUser(session.user));
       }
-    }).catch(() => {});
+      setLoading(false);
+    });
+
+    // Listen for auth state changes (login / logout / token refresh)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setUser(buildAdminUser(session.user));
+      } else {
+        // Only clear if the user was an admin (sub-users don't use Supabase Auth)
+        setUser(prev => (prev?.role === 'admin' ? null : prev));
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  // ── Admin login (Supabase email + password) ──────────────
+  function buildAdminUser(supabaseUser) {
+    return {
+      id:    supabaseUser.id,
+      email: supabaseUser.email,
+      name:  supabaseUser.user_metadata?.name || 'Manager',
+      role:  supabaseUser.user_metadata?.role || 'admin',
+    };
+  }
+
+  // ── Admin login (Supabase email + password) ───────────────
   const login = async (email, password) => {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
       if (error) {
-        // Demo fallback
-        if (email === 'admin@restrohub.com' && password === 'admin123') {
-          const u = { id: 'demo-admin', email, name: 'Admin', role: 'admin' };
-          setUser(u);
-          localStorage.setItem('restrohub_user', JSON.stringify(u));
-          toast.success('Welcome, Admin! (demo mode)');
-          return { success: true };
-        }
-        toast.error('Invalid credentials');
+        toast.error(error.message || 'Invalid credentials');
         return { success: false };
       }
 
-      const u = {
-        id:    data.user.id,
-        email: data.user.email,
-        name:  data.user.user_metadata?.name || 'Manager',
-        role:  data.user.user_metadata?.role || 'admin',
-      };
+      const u = buildAdminUser(data.user);
       setUser(u);
-      localStorage.setItem('restrohub_user', JSON.stringify(u));
       toast.success(`Welcome back, ${u.name}!`);
       return { success: true };
     } catch {
-      // Demo fallback on network error
-      if (email === 'admin@restrohub.com' && password === 'admin123') {
-        const u = { id: 'demo-admin', email, name: 'Admin', role: 'admin' };
-        setUser(u);
-        localStorage.setItem('restrohub_user', JSON.stringify(u));
-        toast.success('Welcome, Admin! (demo mode)');
-        return { success: true };
-      }
-      toast.error('Login failed');
+      toast.error('Login failed. Please try again.');
       return { success: false };
     }
   };
 
-  // ── Sub-user login (username + 4-digit PIN) ──────────────
-  const loginAsSubUser = (userId, pin) => {
-    const users = getSubUsers();
-    const found = users.find(u => u.id === userId);
-    if (!found) { toast.error('User not found'); return { success: false }; }
-    if (found.pin !== pin) { toast.error('Incorrect PIN'); return { success: false }; }
+  // ── Sub-user login (username + 4-digit PIN via Supabase) ──
+  const loginAsSubUser = async (userId, pin) => {
+    try {
+      const { data, error } = await supabase
+        .from('sub_users')
+        .select('*')
+        .eq('id', userId)
+        .single();
 
-    const u = { id: found.id, name: found.username, role: found.role };
-    setUser(u);
-    localStorage.setItem('restrohub_user', JSON.stringify(u));
-    toast.success(`Welcome, ${found.username}!`);
-    return { success: true };
+      if (error || !data) {
+        toast.error('User not found');
+        return { success: false };
+      }
+      if (data.pin !== pin) {
+        toast.error('Incorrect PIN');
+        return { success: false };
+      }
+
+      const u = { id: data.id, name: data.username, role: data.role };
+      setUser(u);
+      toast.success(`Welcome, ${data.username}!`);
+      return { success: true };
+    } catch {
+      toast.error('Login failed. Check your connection.');
+      return { success: false };
+    }
   };
 
-  // ── Admin helpers for managing sub-users ─────────────────
-  const addSubUser = (userData) => {
-    const users = getSubUsers();
+  // ── Sub-user management (Supabase only, no localStorage) ──
+  const getSubUsers = async () => {
+    const { data, error } = await supabase.from('sub_users').select('*').order('role');
+    if (error) { console.warn('getSubUsers error:', error.message); return []; }
+    return data || [];
+  };
+
+  const addSubUser = async (userData) => {
     const id = `${userData.role.charAt(0).toUpperCase()}${Date.now()}`;
     const newUser = { ...userData, id };
-    const updated = [...users, newUser];
-    saveSubUsers(updated);
+
+    const { error } = await supabase.from('sub_users').insert(newUser);
+    if (error) {
+      toast.error(`Failed to add user: ${error.message}`);
+      return null;
+    }
     toast.success(`${userData.username} added as ${userData.role}`);
-    supabase.from('sub_users').insert(newUser).then(({ error }) => {
-      if (error) console.warn('Supabase sub_users sync notice:', error.message);
-    });
     return newUser;
   };
 
-  const removeSubUser = (id) => {
-    const users = getSubUsers().filter(u => u.id !== id);
-    saveSubUsers(users);
+  const removeSubUser = async (id) => {
+    const { error } = await supabase.from('sub_users').delete().eq('id', id);
+    if (error) {
+      toast.error(`Failed to remove user: ${error.message}`);
+      return;
+    }
     toast.success('User removed');
-    supabase.from('sub_users').delete().eq('id', id).then(({ error }) => {
-      if (error) console.warn('Supabase sub_users sync notice:', error.message);
-    });
   };
 
-  const updateSubUser = (id, updates) => {
-    const users = getSubUsers().map(u => u.id === id ? { ...u, ...updates } : u);
-    saveSubUsers(users);
+  const updateSubUser = async (id, updates) => {
+    const { error } = await supabase.from('sub_users').update(updates).eq('id', id);
+    if (error) {
+      toast.error(`Failed to update user: ${error.message}`);
+      return;
+    }
     toast.success('User updated');
-    supabase.from('sub_users').update(updates).eq('id', id).then(({ error }) => {
-      if (error) console.warn('Supabase sub_users sync notice:', error.message);
-    });
   };
 
-  const logout = () => {
+  // ── Logout ────────────────────────────────────────────────
+  const logout = async () => {
+    if (user?.role === 'admin') {
+      await supabase.auth.signOut();
+    }
     setUser(null);
-    localStorage.removeItem('restrohub_user');
-    supabase.auth.signOut().catch(() => {});
     toast.success('Logged out');
   };
 
@@ -145,8 +142,7 @@ export function AuthProvider({ children }) {
       value={{
         user, loading,
         login, loginAsSubUser, logout,
-        addSubUser, removeSubUser, updateSubUser,
-        getSubUsers,
+        getSubUsers, addSubUser, removeSubUser, updateSubUser,
       }}
     >
       {children}
