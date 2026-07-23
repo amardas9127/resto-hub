@@ -10,11 +10,9 @@ export default function WaiterLayout() {
       {/* Waiter top bar */}
       <header className="sticky top-0 z-30 h-14 bg-white/90 backdrop-blur-lg border-b border-surface-200 flex items-center justify-between px-4 shadow-sm">
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
-            <UtensilsCrossed className="w-4 h-4 text-white" />
-          </div>
+          <img src="/icon.png" alt="BillXaro" className="w-7 h-7 rounded-lg object-contain" />
           <span className="text-base font-bold text-surface-900 tracking-tight">
-            Restro<span className="text-amber-500">Hub</span>
+            Bill<span className="text-amber-500">Xaro</span>
           </span>
           <span className="hidden sm:inline text-xs font-medium text-amber-600 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full ml-1">
             Waiter

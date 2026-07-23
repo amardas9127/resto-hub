@@ -19,7 +19,7 @@ export default function Layout() {
   const baseTitle = Object.entries(pageTitles).find(
     ([path]) => location.pathname === path || location.pathname.startsWith(path + '/')
   );
-  const title = baseTitle?.[1] || 'RestroHub';
+  const title = baseTitle?.[1] || 'BillXaro';
 
   return (
     <div className="flex h-dvh overflow-hidden bg-surface-50">

@@ -30,8 +30,8 @@ function buildPrintHTML(bill) {
     /* ── Header ── */
     .header{display:flex;align-items:center;justify-content:space-between;padding-bottom:18px;border-bottom:2px solid #f59e0b}
     .brand{display:flex;align-items:center;gap:12px}
-    .logo-box{width:44px;height:44px;background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:10px;display:flex;align-items:center;justify-content:center}
-    .logo-box svg{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .logo-box{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+    .logo-box img{width:44px;height:44px;object-fit:contain}
     .brand-name{font-size:22px;font-weight:800;color:#1e293b;letter-spacing:-0.5px}
     .brand-name span{color:#f59e0b}
     .brand-tag{font-size:10px;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;margin-top:2px}
@@ -82,11 +82,9 @@ function buildPrintHTML(bill) {
   <!-- Header -->
   <div class="header">
     <div class="brand">
-      <div class="logo-box">
-        <svg viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
-      </div>
+        <img src="/icon.png" alt="BillXaro" />
       <div>
-        <div class="brand-name">Restro<span>Hub</span></div>
+        <div class="brand-name">Bill<span>Xaro</span></div>
         <div class="brand-tag">Fine Dining &amp; Café</div>
       </div>
     </div>
@@ -149,7 +147,7 @@ function buildPrintHTML(bill) {
   <!-- Footer -->
   <div class="footer">
     <p class="thanks">✦ Thank you for dining with us! ✦</p>
-    <p>Please visit again · RestroHub · All prices inclusive of applicable taxes</p>
+    <p>Please visit again · BillXaro · All prices inclusive of applicable taxes</p>
     <p>This is a computer-generated invoice and does not require a signature.</p>
   </div>
 
@@ -180,11 +178,9 @@ function BillDetailModal({ bill, onClose }) {
         {/* Modal Header */}
         <div className="sticky top-0 bg-white rounded-t-2xl z-10 flex items-center justify-between px-5 py-4 border-b border-surface-100">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center">
-              <UtensilsCrossed className="w-4 h-4 text-white" />
-            </div>
+              <img src="/icon.png" alt="BillXaro" className="w-8 h-8 rounded-lg object-contain" />
             <div>
-              <p className="text-sm font-bold text-surface-900 leading-tight">RestroHub</p>
+              <p className="text-sm font-bold text-surface-900 leading-tight">BillXaro</p>
               <p className="text-[10px] text-surface-400 font-mono leading-tight">{bill.id}</p>
             </div>
           </div>
@@ -274,7 +270,7 @@ function BillDetailModal({ bill, onClose }) {
 
           {/* Thank you */}
           <p className="text-center text-xs text-surface-400 italic pt-1">
-            ✦ Thank you for dining with us at <strong className="text-primary-500 not-italic">RestroHub</strong> ✦
+            ✦ Thank you for dining with us at <strong className="text-primary-500 not-italic">BillXaro</strong> ✦
           </p>
         </div>
       </div>

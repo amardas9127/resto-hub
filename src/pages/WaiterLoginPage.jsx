@@ -20,7 +20,7 @@ export default function WaiterLoginPage() {
     setError('');
 
     try {
-      // 1. Get user by email (waiter@restrohub.com)
+      // 1. Get user by email (waiter account in Supabase DB)
       const { data: userRes, error: userError } = await supabase
         .from('users')
         .select('id, pin')
@@ -64,11 +64,9 @@ export default function WaiterLoginPage() {
         <div className="glass-dark rounded-2xl p-8 shadow-2xl">
           {/* Logo */}
           <div className="flex flex-col items-center mb-8">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center mb-4 shadow-lg shadow-primary-500/25">
-              <UtensilsCrossed className="w-7 h-7 text-white" />
-            </div>
+            <img src="/icon.png" alt="BillXaro" className="w-16 h-16 rounded-2xl object-contain mb-4 drop-shadow-lg" />
             <h1 className="text-2xl font-bold text-white tracking-tight">
-              Restro<span className="text-primary-400">Hub</span>
+              Bill<span className="text-primary-400">Xaro</span>
             </h1>
             <p className="text-surface-400 text-sm mt-1">
               Waiter Login

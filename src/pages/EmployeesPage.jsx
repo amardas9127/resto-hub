@@ -31,7 +31,7 @@ function AddEmployeeModal({ open, onClose, onAdd }) {
           </div>
           <div>
             <label className="block text-sm font-medium text-surface-600 mb-1.5">Email</label>
-            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="ravi@restrohub.com" className="w-full px-4 py-2.5 border border-surface-200 rounded-xl text-surface-800 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400 transition-all" />
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="ravi@billxaro.com" className="w-full px-4 py-2.5 border border-surface-200 rounded-xl text-surface-800 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-400 transition-all" />
           </div>
           <div>
             <label className="block text-sm font-medium text-surface-600 mb-1.5">Role</label>

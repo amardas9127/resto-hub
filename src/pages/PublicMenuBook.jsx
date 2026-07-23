@@ -70,12 +70,10 @@ export default function PublicMenuBook() {
           
           {/* Logo & Title */}
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center shadow-lg shadow-amber-500/20">
-              <UtensilsCrossed className="w-6 h-6 text-stone-950 font-bold" />
-            </div>
+            <img src="/icon.png" alt="BillXaro" className="w-11 h-11 rounded-2xl object-contain shadow-lg shadow-amber-500/20" />
             <div>
               <h1 className="text-xl font-extrabold tracking-tight bg-gradient-to-r from-amber-200 via-amber-400 to-amber-500 bg-clip-text text-transparent">
-                RestroHub
+                BillXaro
               </h1>
               <p className="text-xs text-stone-400 font-medium tracking-wide">DIGITAL MENU BOOK</p>
             </div>
@@ -362,7 +360,7 @@ export default function PublicMenuBook() {
                 <span className="flex items-center gap-1 text-emerald-400">
                   <CheckCircle2 className="w-4 h-4" /> Freshly Prepared
                 </span>
-                <span>RestroHub Menu</span>
+                <span>BillXaro Menu</span>
               </div>
             </div>
           </div>
@@ -371,7 +369,7 @@ export default function PublicMenuBook() {
 
       {/* Footer */}
       <footer className="border-t border-stone-800 bg-stone-950 py-8 text-center text-xs text-stone-500">
-        <p>© {new Date().getFullYear()} RestroHub Restaurant & Cafe. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} BillXaro Restaurant & Cafe. All rights reserved.</p>
       </footer>
     </div>
   );

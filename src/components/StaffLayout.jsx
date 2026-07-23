@@ -61,12 +61,10 @@ export default function StaffLayout() {
       <header className="sticky top-0 z-40 bg-white border-b border-surface-200 shadow-sm">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${config.accent} flex items-center justify-center flex-shrink-0`}>
-              <UtensilsCrossed className="w-4 h-4 text-white" />
-            </div>
+            <img src="/icon.png" alt="BillXaro" className="w-8 h-8 rounded-lg object-contain" />
             <div>
               <span className="text-sm font-bold text-surface-900">
-                Restro<span className={config.accentText}>Hub</span>
+                Bill<span className={config.accentText}>Xaro</span>
               </span>
               <span className={`ml-2 text-xs font-semibold px-2 py-0.5 rounded-full border ${config.accentBg} ${config.accentText} capitalize`}>
                 {config.label}

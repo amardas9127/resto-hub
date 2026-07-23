@@ -43,11 +43,9 @@ export default function Sidebar({ open, onClose }) {
         {/* Logo */}
         <div className="flex items-center justify-between px-5 h-16 border-b border-surface-200">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center">
-              <UtensilsCrossed className="w-4 h-4 text-white" />
-            </div>
+            <img src="/icon.png" alt="BillXaro" className="w-8 h-8 rounded-lg object-contain" />
             <span className="text-lg font-bold text-surface-900 tracking-tight">
-              Restro<span className="text-primary-500">Hub</span>
+              Bill<span className="text-primary-500">Xaro</span>
             </span>
           </div>
           <button
@@ -92,7 +90,7 @@ export default function Sidebar({ open, onClose }) {
         {/* Footer */}
         <div className="px-4 py-3 border-t border-surface-200">
           <p className="text-xs text-surface-400 text-center">
-            RestroHub v1.0 · Admin
+            BillXaro v1.0 · Admin
           </p>
         </div>
       </aside>
